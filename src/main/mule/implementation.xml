@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:oauth="http://www.mulesoft.org/schema/mule/oauth"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="92f97e40-3fbb-4924-9360-9a6e5680aa52" basePath="/booking" >
+		<http:request-connection host="booking-oauth-api.us-e2.cloudhub.io" >
+			<http:authentication >
+				<oauth:client-credentials-grant-type clientId="KZ25TpHNeppVOmwtKpD6jQAjnq4vrLG1" clientSecret="CYBpVYhSeqSy4GSR" tokenUrl="http://booking-oauth-api.us-e2.cloudhub.io/token" >
+					<oauth:token-manager objectStore="Object_store" />
+				</oauth:client-credentials-grant-type>
+			</http:authentication>
+		</http:request-connection>
+	</http:request-config>
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="3f100f86-f6ee-4559-9d4e-809382946fe1" maxEntries="100" entryTtl="10" entryTtlUnit="MINUTES" expirationIntervalUnit="SECONDS" />
+	<flow name="get-booking-data" doc:id="2c6afcee-2b61-4a2f-84a5-880c7dbf2646" >
+		<logger level="INFO" doc:name="Logger" doc:id="027fed6b-c1e1-4a92-a163-0f884dfedff7" />
+		<http:request method="GET" doc:name="Request" doc:id="263eebc3-b011-4fe7-b572-2fc08e230232" config-ref="HTTP_Request_configuration" path="/{BID}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"BID" : vars.BID
+}]]]></http:uri-params>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="26731b3a-ee82-4c92-8034-b30b351d1851" />
+	</flow>
+</mule>
